@@ -1,1 +1,61 @@
 #integral de convolução
+% Parâmetros do sistema
+m = 1;         % massa
+k = 1000;         % constante da mola
+c = 50;       % constante do amortecedor
+
+% Parâmetros da força harmônica
+A = -100;       % amplitude
+f = 78.5398;         % frequência
+phi = 0;    % fase inicial
+
+% Condições iniciais
+x0 = 0.7;      % posição inicial
+v0 = 30;     % velocidade inicial
+
+% Tempo de simulação
+t_start = 0;
+t_end = 5;
+dt = 0.02;
+t = t_start:dt:t_end;
+n = length(t);
+
+% Inicialização dos vetores de posição, velocidade e resposta total
+x = zeros(1, n);
+v = zeros(1, n);
+response = zeros(1, n);
+
+% Cálculo dos coeficientes C1 e C2
+omega = sqrt(k/m - (c/(2*m))^2);
+if c < 2*m*omega
+    alpha = c/(2*m);
+    C1 = (v0 + alpha*x0)/omega;
+    C2 = x0;
+else
+    alpha_1 = (-c + sqrt(c^2 - 4*m*k))/(2*m);
+    alpha_2 = (-c - sqrt(c^2 - 4*m*k))/(2*m);
+    C1 = (v0 - alpha_2*x0)/(alpha_1 - alpha_2);
+    C2 = x0 - C1;
+end
+
+% Cálculo da resposta homogênea
+x_hom = @(t) exp(-alpha*t).*(C1*cos(omega*t) + C2*sin(omega*t));
+
+% Cálculo da resposta permanente
+x_per = @(t) (A/(m*(omega^2 - f^2)))*(cos(f*t) - cos(omega*t));
+
+% Cálculo da resposta total usando a integral de convolução
+for i = 1:n
+    if c < 2*m*omega
+        response(i) = integral(@(tau) x_per(t(i)-tau).*exp(-alpha*tau).*sin(omega*(t(i)-tau)), 0, t(i)) + x_hom(t(i));
+    else
+        response(i) = integral(@(tau) x_per(t(i)-tau).*exp(-alpha_1*(t(i)-tau)).*sin(omega*(t(i)-tau)), 0, t(i)) + x_hom(t(i));
+    end
+end
+
+% Plot da resposta
+figure;
+plot(t, response);
+xlabel('Tempo');
+ylabel('Resposta');
+title('Resposta do sistema massa-mola-amortecedor com integral de convolução');
