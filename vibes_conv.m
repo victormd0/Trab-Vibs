@@ -20,7 +20,7 @@ t = t_start:dt:t_end;
 omega_n = sqrt(k / m);
 
 % Fator de amortecimento
-xi = c / (2 * m);
+xi = c / (2 * sqrt(m * k));
 
 % Resposta homogênea
 omega_d = omega_n * sqrt(1 - xi^2);
@@ -28,12 +28,15 @@ c1 = x0;
 c2 = (v0 + xi * x0 * omega_n) / omega_d;
 x_hom = @(t) exp(-xi * omega_n * t) .* (c1 * cos(omega_d * t) + c2 * sin(omega_d * t));
 
-% Resposta permanente
-F0 = -100 * (50 / sqrt((k - m * omega_n^2)^2 + (c * omega_n)^2));
-x_per = @(t) F0 * cos(omega_n * t - atan(c * omega_n / (k - m * omega_n^2)));
-
-% Cálculo da resposta total pela integral de convolução usando a função conv
-response = conv(x_hom(t), F(t), 'same') * dt + x_per(t);
+% Cálculo da resposta total pela integral de convolução
+response = zeros(size(t));
+for i = 1:length(t)
+    integral = 0;
+    for j = 1:i
+        integral = integral + x_hom(t(i)-t(j)) * F(t(i)-t(j)) * dt;
+    end
+    response(i) = integral;
+end
 
 % Plot da resposta total
 figure;
