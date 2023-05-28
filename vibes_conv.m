@@ -1,51 +1,43 @@
 % Parâmetros do sistema
 m = 1;     % massa (kg)
+c = 5;     % constante do amortecedor (Ns/m)
 k = 1000;  % constante da mola (N/m)
-c = 50;    % constante do amortecedor (Ns/m)
-
-% Força harmônica
-F = @(t) -100*(50*t);  % F(t) = -100*(50t) (N)
 
 % Condições iniciais
-x0 = 0.7;    % posição inicial (m)
-v0 = 30;    % velocidade inicial (m/s)
+x0 = 0.7;  % posição inicial (m)
+v0 = 30;   % velocidade inicial (m/s)
+
+% Função da força externa
+F = @(t) -100 * (50 * t);  % Exemplo: F(t) = -100*(50t)
 
 % Tempo de simulação
 t_start = 0;
 t_end = 5;
 dt = 0.02;
 t = t_start:dt:t_end;
-n = length(t);
 
-% Coeficientes da resposta homogênea e permanente
-omega = sqrt(k/m - (c/(2*m))^2);
-alpha = c/(2*m);
+% Frequência natural do sistema
+omega_n = sqrt(k / m);
 
-if c < 2*m*omega
-    C1 = (v0 + alpha*x0)/omega;
-    C2 = x0;
-else
-    alpha_1 = (-c + sqrt(c^2 - 4*m*k))/(2*m);
-    alpha_2 = (-c - sqrt(c^2 - 4*m*k))/(2*m);
-    C1 = (v0 - alpha_2*x0)/(alpha_1 - alpha_2);
-    C2 = x0 - C1;
-end
+% Fator de amortecimento
+xi = c / (2 * m);
 
-% Cálculo da resposta total pela integral de convolução
-response = zeros(1, n);
+% Resposta homogênea
+omega_d = omega_n * sqrt(1 - xi^2);
+c1 = x0;
+c2 = (v0 + xi * x0 * omega_n) / omega_d;
+x_hom = @(t) exp(-xi * omega_n * t) .* (c1 * cos(omega_d * t) + c2 * sin(omega_d * t));
 
-for i = 1:n
-    x_hom = @(tau) (C1*cos(omega*(t(i)-tau)) + C2*sin(omega*(t(i)-tau))) .* exp(-alpha*(t(i)-tau));
-    x_per = @(tau) F(tau) / k;
-    response(i) = integral(@(tau) x_hom(tau) .* x_per(t(i)-tau), 0, t(i));
-end
+% Resposta permanente
+F0 = -100 * (50 / sqrt((k - m * omega_n^2)^2 + (c * omega_n)^2));
+x_per = @(t) F0 * cos(omega_n * t - atan(c * omega_n / (k - m * omega_n^2)));
 
-% Adicionando a resposta homogênea
-response = response + x_hom(t);
+% Cálculo da resposta total pela integral de convolução usando a função conv
+response = conv(x_hom(t), F(t), 'same') * dt + x_per(t);
 
-% Plot da resposta
+% Plot da resposta total
 figure;
 plot(t, response);
 xlabel('Tempo (s)');
-ylabel('Resposta (m)');
-title('Resposta do sistema massa-mola-amortecedor pela integral de convolução');
+ylabel('Posição (m)');
+title('Resposta Total do sistema MMA (Integral de Convolução)');
