@@ -23,7 +23,7 @@ omega_n = sqrt(k / m);
 % Fator de amortecimento
 xi = c / (2 * sqrt(m * k));
 
-% Resposta homogênea
+
 omega_d = omega_n * sqrt(1 - xi^2);
 
 Green = @(t) exp(-xi*omega_n*t)/(m*omega_d).*sin(omega_d*t);
