@@ -28,7 +28,7 @@ omega_d = omega_n * sqrt(1 - xi^2);
 
 Green = @(t) exp(-xi*omega_n*t)/(m*omega_d).*sin(omega_d*t);
 
-% Cálculo da resposta total pela integral de convolução
+% Cálculo da resposta parcial pela integral de convolução
 
 xp = dt*conv(Green(t),F(t));
 xp = xp(1:length(t));
