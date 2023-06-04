@@ -60,6 +60,9 @@ x = x_hom(t) + xp;
 %v0
 %disp(["x(0) = "  num2str(x(1))])
 %disp(["x'(0) = " , num2str((diff(x)/dt)(1))]);
+%
+%Novamente, observa-se uma convergência de x(0) e x'(0) para x0 e v0 conforme dt diminui
+%
 
 
 % Plot da resposta total
