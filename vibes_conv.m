@@ -9,7 +9,7 @@ x0 = 0.7;  % posição inicial 0.7(m)
 v0 = 30;   % velocidade inicial 30(m/s)
 
 % Função da Força Externa
-F = @(t) -100 * cos(50 * t);  % Exemplo: F(t) = -100*cos(50t)
+F = @(t) -100 * cos(50 * t);
 
 % Tempo de simulação
 t_start = 0;
