@@ -136,27 +136,34 @@ sist = Sistema1(mass=1, k=1000, Fo=-100, w=50, c=5, xo=0.7, vo=30,ti = 0, tf = 5
 # plt.show()
 
 import pandas as pd
+from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error
 
 # Importar os dados do arquivo CSV
-df = pd.read_csv('DADOS_DO_MATLAB.csv', header = None)
-df.columns = ['t', 'x']
-print(df.head())
-# Acessar os dados de x e y
-x = df['x'].values
-y = df['t'].values
+conv = pd.read_csv('DADOS_DO_MATLAB.csv', header = None)
+conv.columns = ['x', 't']
 
-x2, y2 = sist.function()
-print
-# y3 = y-y2
+# diff = pd.read_csv('DADOS_DO_MATLAB.csv', header = None)
+# diff.columns = ['x', 't']
+# incluir metodo dif fin
+
+# Acessar os dados de x e y
+x1 = conv['x'].values
+t1 = conv['t'].values
+
+t2, x2 = sist.function()
+print(f'Mean absolute error: {1e3*mean_absolute_error(x1,x2):.3} mm')
+print(f'Mean absolute percentage error: {1e2*mean_absolute_percentage_error(x1,x2):.3}%')
+Dif = x1-x2
 
 # Plotar o gráfico no Python
 import matplotlib.pyplot as plt
 
-plt.plot(x, y, 'bx-', label='Resposta Total do sistema (Integral de Convolução)')
-plt.plot(x2, y2,'rx--')
-# plt.plot(x, y3,'k')
-plt.xlabel('Eixo x')
-plt.ylabel('Eixo y')
+
+plt.plot(t1, x1, 'bx-', label='Metodo Integral de Convolução')
+plt.plot(t2, x2,'rx--', label='Analítico')
+plt.plot(t1, Dif,'k')
+plt.xlabel('Tempo t [s]')
+plt.ylabel('Deslocamento x(t) [m]')
 plt.title('Sobreposição de gráficos')
 plt.legend()
 plt.show()
