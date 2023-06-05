@@ -1,23 +1,23 @@
-% Parâmetros do sistema
+% ParÃ¢metros do sistema
 m = 1;     % massa (kg)
 c = 5;     % constante do amortecedor (Ns/m)
 k = 1000;  % constante da mola (N/m)
 
 
-% Condições iniciais
-x0 = 0.7;  % posição inicial 0.7(m)
+% CondiÃ§Ãµes iniciais
+x0 = 0.7;  % posiÃ§Ã£o inicial 0.7(m)
 v0 = 30;   % velocidade inicial 30(m/s)
 
-% Função da Força Externa
+% FunÃ§Ã£o da ForÃ§a Externa
 F = @(t) -100 * cos(50 * t);
 
-% Tempo de simulação
+% Tempo de simulaÃ§Ã£o
 t_start = 0;
 t_end = 5;
 dt = 0.02;
 t = t_start:dt:t_end;
 
-% Frequência natural do sistema
+% FrequÃªncia natural do sistema
 omega_n = sqrt(k / m);
 
 % Fator de amortecimento
@@ -28,14 +28,14 @@ omega_d = omega_n * sqrt(1 - xi^2);
 
 Green = @(t) exp(-xi*omega_n*t)/(m*omega_d).*sin(omega_d*t);
 
-% Cálculo da resposta parcial pela integral de convolução
+% CÃ¡lculo da resposta parcial pela integral de convoluÃ§Ã£o
 
 xp = dt*conv(Green(t),F(t));
 xp = xp(1:length(t));
 
 
-% Cálculo de c1 e c2
-%diff: Função para calcular diferenças forward e, com isso, calcular a derivada
+% CÃ¡lculo de c1 e c2
+%diff: FunÃ§Ã£o para calcular diferenÃ§as forward e, com isso, calcular a derivada
 
 c1 = x0 - xp(1);
 derxp = diff(xp)/dt;
@@ -48,12 +48,12 @@ x = x_hom(t) + xp;
 %teste_funct = m*diff(diff(x))/dt^2 + c*diff(x)(1:length(x)-2)/dt + k*(x)(1:length(x)-2);
 %plot(t(1:length(t)-2),abs(teste_funct-F(t)(1:length(t)-2)),'bo-');
 %
-%O plot acima mostra a diferença em módulo entre " mx'' + cx' + kx " e " F(t) "
+%O plot acima mostra a diferenÃ§a em mÃ³dulo entre " mx'' + cx' + kx " e " F(t) "
 %Observa-se que o plot diminui em valor conforme dt diminui
-%Se dt = 0.02, o valor máximo do plot é por volta de 530
-%Se dt = 0.0001, o valor máximo do plot é por volta de 2.8
+%Se dt = 0.02, o valor mÃ¡ximo do plot Ã© por volta de 530
+%Se dt = 0.0001, o valor mÃ¡ximo do plot Ã© por volta de 2.8
 %
-%O código abaixo mostra os valores de x0 e v0 esperados assim como seus valores
+%O cÃ³digo abaixo mostra os valores de x0 e v0 esperados assim como seus valores
 %obtidos pela x(t) calculada.
 %
 %x0
@@ -61,7 +61,7 @@ x = x_hom(t) + xp;
 %disp(["x(0) = "  num2str(x(1))])
 %disp(["x'(0) = " , num2str((diff(x)/dt)(1))]);
 %
-%Novamente, observa-se uma convergência de x(0) e x'(0) para x0 e v0 conforme dt diminui
+%Novamente, observa-se uma convergÃªncia de x(0) e x'(0) para x0 e v0 conforme dt diminui
 %
 
 
@@ -69,8 +69,8 @@ x = x_hom(t) + xp;
 figure;
 plot(t,x,'bx-');
 xlabel('Tempo (s)');
-ylabel('Posição (m)');
-title('Resposta Total do sistema (Integral de Convolução)');
+ylabel('PosiÃ§Ã£o (m)');
+title('Resposta Total do sistema (Integral de ConvoluÃ§Ã£o)');
 
 data = [x' t'];
 csvwrite('C:\Users\Boiling\Desktop\vis comp\DADOS_DO_MATLAB.csv', data);
