@@ -13,9 +13,9 @@ class Sistema1:
         c: float,
         xo: float,
         vo: float,
-        ti:float,
-        tf:float,
-        dt:float
+        ti: float,
+        tf: float,
+        dt: float
     ) -> None:
 
         # Inicializando variáveis
@@ -42,7 +42,7 @@ class Sistema1:
 
     def function(self) -> tuple[np.array, np.array]:
         # Sistema amortecido com força harmônica externa
-        self.t = np.arange(self.ti, self.tf + self.dt/2, self.dt)
+        self.t = np.arange(self.ti, self.tf+self.dt, self.dt)
 
         big_X = self.deltast / (np.sqrt((1 - self.r**2) ** 2 + (2 * self.xi * self.r) ** 2))
 
@@ -84,7 +84,7 @@ class Sistema1:
     def plot_transient_continuos(self) -> None:
         self.function()
 
-        permanent = self.xp
+        transient = self.xp
         homogeneous = self.xhom
         total = self.x
 
@@ -94,7 +94,7 @@ class Sistema1:
         fig, ax = plt.subplots(nrows=3, ncols=1, figsize=(10, 10), tight_layout=True)
 
         ax[0].plot(self.t, total)
-        ax[1].plot(self.t, permanent)
+        ax[1].plot(self.t, transient)
         ax[2].plot(self.t, homogeneous)
 
         ax[0].set(
@@ -103,7 +103,7 @@ class Sistema1:
             ylabel="x",
         )
         ax[1].set(
-            title="Resposta Permanente",
+            title="Resposta Transiente",
             xlabel="t",
             ylabel="x",
         )
@@ -120,10 +120,10 @@ class Sistema1:
 
 # Trabalho
 sist = Sistema1(mass=1, k=1000, Fo=-100, w=50, c=5, xo=0.7, vo=30,ti = 0, tf = 5, dt = 0.02)
-sist.plot_vibration_behaviour()
-#sist.plot_transient_continuos()
+# sist.plot_vibration_behaviour()
+# sist.plot_transient_continuos()
 
-# TESTE
+#TESTE
 # sist.function()
 # print('x0:',sist.xo)
 # print('x(0):',sist.x[0])
@@ -134,3 +134,29 @@ sist.plot_vibration_behaviour()
 # Teste = sist.mass * np.diff( np.diff(sist.x) )/(sist.dt ** 2) + (sist.c * np.diff(sist.x)/sist.dt )[:-1] + ( sist.k*sist.x )[:-2] 
 # ax.plot(sist.t[:-2],np.abs(Teste - F))
 # plt.show()
+
+import pandas as pd
+
+# Importar os dados do arquivo CSV
+df = pd.read_csv('DADOS_DO_MATLAB.csv', header = None)
+df.columns = ['t', 'x']
+print(df.head())
+# Acessar os dados de x e y
+x = df['x'].values
+y = df['t'].values
+
+x2, y2 = sist.function()
+print
+# y3 = y-y2
+
+# Plotar o gráfico no Python
+import matplotlib.pyplot as plt
+
+plt.plot(x, y, 'bx-', label='Resposta Total do sistema (Integral de Convolução)')
+plt.plot(x2, y2,'rx--')
+# plt.plot(x, y3,'k')
+plt.xlabel('Eixo x')
+plt.ylabel('Eixo y')
+plt.title('Sobreposição de gráficos')
+plt.legend()
+plt.show()
