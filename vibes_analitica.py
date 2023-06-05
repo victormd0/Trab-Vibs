@@ -84,7 +84,7 @@ class Sistema1:
     def plot_transient_continuos(self) -> None:
         self.function()
 
-        transient = self.xp
+        permanent = self.xp
         homogeneous = self.xhom
         total = self.x
 
@@ -94,7 +94,7 @@ class Sistema1:
         fig, ax = plt.subplots(nrows=3, ncols=1, figsize=(10, 10), tight_layout=True)
 
         ax[0].plot(self.t, total)
-        ax[1].plot(self.t, transient)
+        ax[1].plot(self.t, permanent)
         ax[2].plot(self.t, homogeneous)
 
         ax[0].set(
@@ -103,7 +103,7 @@ class Sistema1:
             ylabel="x",
         )
         ax[1].set(
-            title="Resposta Transiente",
+            title="Resposta Permanente",
             xlabel="t",
             ylabel="x",
         )
