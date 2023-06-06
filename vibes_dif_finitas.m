@@ -24,7 +24,7 @@ x(2) = x(1) + v0*dt;
 
 %Resto das iterações
 for i = 3 : (length(t))
-    x(i) = x(i-1)*(2-dt*c/m - (dt)^2*k/m)+x(i-2)*(dt*c/m-1)-(dt)^2/m*F(t_start+i*dt);
+    x(i) = x(i-1)*(2-dt*c/m - (dt)^2*k/m)+x(i-2)*(dt*c/m-1)-(dt)^2/m*F(t_start+(i-1)*dt);
 end
 
 
