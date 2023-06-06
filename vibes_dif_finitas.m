@@ -19,7 +19,7 @@ t = t_start:dt:t_end;
 
 %Iterações a partir das condições iniciais
 x(1) = x0;
-x(2) = (x0+v0*dt)*(2-dt*c/m - dt^2*k/m)+x0*(dt*c/m-1)-dt^2/m*F(t_start+dt);
+x(2) = v0*dt + x(1);
 
 
 %Resto das iterações
