@@ -142,28 +142,58 @@ from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error
 conv = pd.read_csv('DADOS_DO_MATLAB.csv', header = None)
 conv.columns = ['x', 't']
 
-# diff = pd.read_csv('DADOS_DO_MATLAB.csv', header = None)
-# diff.columns = ['x', 't']
-# incluir metodo dif fin
+diff = pd.read_csv('DADOS_DO_diffin.csv', header = None)
+diff.columns = ['x', 't']
+ 
 
 # Acessar os dados de x e y
 x1 = conv['x'].values
 t1 = conv['t'].values
+x3 = diff['x'].values
+t3 = diff['t'].values
 
-t2, x2 = sist.function()
-print(f'Mean absolute error: {1e3*mean_absolute_error(x1,x2):.3} mm')
-print(f'Mean absolute percentage error: {1e2*mean_absolute_percentage_error(x1,x2):.3}%')
-Dif = x1-x2
+t_ref, x_ref = sist.function()
+
+MAE = mean_absolute_error(x1,x_ref)
+MAPE = 1e2*mean_absolute_percentage_error(x1,x_ref)
+print(f'Mean absolute error: {1e3*MAE:.3} mm')
+print(f'Mean absolute percentage error: {1e2*MAPE:.3}%')
+textcov = f'Metodo Integral de Convolução: \n MAPE: {MAPE:.2f}%'
+Dif1 = x_ref - x1
+Dif2 = x_ref - x3
+
+MAE = mean_absolute_error(x3,x_ref)
+MAPE = 1e2*mean_absolute_percentage_error(x3,x_ref)
+print(f'Mean absolute error: {1e3*MAE:.3} mm')
+print(f'Mean absolute percentage error: {1e2*MAPE:.3}%')
+textdif = f'Metodo Diferenças Finitas: \n MAPE: {MAPE:.2f}%'
 
 # Plotar o gráfico no Python
 import matplotlib.pyplot as plt
 
+fig, axis = plt.subplots(ncols=1, nrows=2, sharex=True, figsize = (6,4))
+fig.subplots_adjust(hspace=0)
 
-plt.plot(t1, x1, 'bx-', label='Metodo Integral de Convolução')
-plt.plot(t2, x2,'rx--', label='Analítico')
-plt.plot(t1, Dif,'k')
-plt.xlabel('Tempo t [s]')
-plt.ylabel('Deslocamento x(t) [m]')
-plt.title('Sobreposição de gráficos')
+axis[0].plot(t_ref, x_ref,'ro-', label='Analítico', markersize = 2, markerfacecolor='None')
+axis[0].plot(t1, x1, 'bx--', label='Metodo Integral de Convolução', markersize = 3, dashes=(5, 10))
+axis[0].plot(t3, x3,'ko--', label='Diferenças Finitas', markersize = 2, markerfacecolor='None', dashes=(5, 10))
+axis[1].plot(t1, Dif1,'bx--', label='Metodo Integral de Convolução', markersize = 3, dashes=(5, 10))
+axis[1].plot(t_ref, Dif2,'ko--', label='Diferenças Finitas', markersize = 2, markerfacecolor='None', dashes=(5, 10))
+
+props = dict(facecolor='none', edgecolor='none')
+axis[0].text(0.50, 0.225, textcov, transform=axis[0].transAxes, verticalalignment='top', bbox=props)
+axis[0].text(0.50, 0.975, textdif, transform=axis[0].transAxes, verticalalignment='top', bbox=props)
+
+
+axis[1].set_xlabel('Tempo t [s]')
+axis[0].set_ylabel('Deslocamento x(t) [m]')
+axis[1].set_ylabel('Erro [m]')
+# axis[0].set_ylim(-1.15,1.15)
+axis[0].set_xlim(0,5)
+
+
+# plt.title('Sobreposição de gráficos')
 plt.legend()
 plt.show()
+
+fig.savefig('superprop.png', dpi=600, bbox_inches='tight', pad_inches=0)
