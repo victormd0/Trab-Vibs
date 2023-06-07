@@ -1,3 +1,5 @@
+clear all
+
 % Parâmetros do sistema
 m = 1;     % massa (kg)
 c = 5;     % constante do amortecedor (Ns/m)
@@ -51,3 +53,7 @@ plot(t,x,'bo-');
 xlabel('Tempo (s)');
 ylabel('Posição (m)');
 title('Resposta Total do sistema (Diferenças finitas)');
+
+data = [x' t'];
+csvwrite('C:\Users\Boiling\Desktop\vis comp\DADOS_DO_diffin.csv', data);
+
